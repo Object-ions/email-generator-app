@@ -27,9 +27,9 @@ const newLineProducts = [
 
 const Form = () => {
   const [customerName, setCustomerName] = useState("");
+  const [customerEmail, setCustomerEmail] = useState("");
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [successMessage, setSuccessMessage] = useState(false);
-  const [customerEmail, setCustomerEmail] = useState("");
 
   const handleProductChange = (event) => {
     const value = event.target.value;
@@ -40,6 +40,7 @@ const Form = () => {
 
   const handleFormReset = () => {
     setCustomerName("");
+    setCustomerEmail(""); // ✅ Clear email after submission
     setSelectedProducts([]);
     setSuccessMessage(true);
 
@@ -57,6 +58,7 @@ const Form = () => {
         onChange={(e) => setCustomerName(e.target.value)}
         placeholder="Enter first name"
       />
+
       <label>Email:</label>
       <input
         type="email"
@@ -109,15 +111,16 @@ const Form = () => {
         </tbody>
       </table>
 
-      {selectedProducts.length > 0 && customerName && (
+      {selectedProducts.length > 0 && customerName && customerEmail && (
         <PDFGenerator
           customerName={customerName}
+          customerEmail={customerEmail}
           selectedProducts={selectedProducts}
           onSuccess={handleFormReset}
         />
       )}
 
-      {successMessage && <p className="success-message">✅ File has been successfully created!</p>}
+      {successMessage && <p className="success-message">✅ File has been successfully sent!</p>}
     </div>
   );
 };
