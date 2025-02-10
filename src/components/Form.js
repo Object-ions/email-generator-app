@@ -29,6 +29,7 @@ const Form = () => {
   const [customerName, setCustomerName] = useState("");
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [successMessage, setSuccessMessage] = useState(false);
+  const [customerEmail, setCustomerEmail] = useState("");
 
   const handleProductChange = (event) => {
     const value = event.target.value;
@@ -55,6 +56,13 @@ const Form = () => {
         value={customerName}
         onChange={(e) => setCustomerName(e.target.value)}
         placeholder="Enter first name"
+      />
+      <label>Email:</label>
+      <input
+        type="email"
+        value={customerEmail}
+        onChange={(e) => setCustomerEmail(e.target.value)}
+        placeholder="Enter email"
       />
 
       <h2>Select Products</h2>
