@@ -24,43 +24,56 @@ const productInstructions = {
 
 const PDFGenerator = ({ customerName, selectedProducts, onSuccess }) => {
   const generatePDF = () => {
-    const doc = new jsPDF();
-    doc.setFont("helvetica", "bold");
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 40;
+    const maxTextWidth = pageWidth - margin * 2;
 
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(20);
-    doc.text("Personalized Skincare Routine", 20, 20);
+    doc.text("Personalized Skincare Routine", margin, 50);
 
     doc.setFontSize(12);
-    doc.text("Provided by Zahav & New Line", 20, 30);
+    doc.text("Provided by Zahav & New Line", margin, 70);
 
+    // Greeting
     doc.setFontSize(14);
-    doc.text(`Dear ${customerName},`, 20, 45);
+    doc.text(`Dear ${customerName},`, margin, 100);
     doc.setFont("helvetica", "normal");
     doc.text(
       "Thank you for shopping with us! We appreciate your trust in our skincare products. " +
       "Below, you'll find personalized instructions to maximize the benefits of your routine.",
-      20,
-      55,
-      { maxWidth: 170 }
+      margin,
+      120,
+      { maxWidth: maxTextWidth }
     );
 
-    let yPos = 80;
+    // Adjust line height dynamically
+    let yPos = 160;
+    const lineHeight = 18; // Increase line height to prevent overlap
+
     selectedProducts.forEach((product, index) => {
+      if (yPos > 750) {
+        doc.addPage();
+        yPos = 50;
+      }
+
       doc.setFont("helvetica", "bold");
-      doc.text(`${index + 1}. ${product}`, 20, yPos);
+      doc.text(`${index + 1}. ${product}`, margin, yPos);
+      yPos += lineHeight;
+
       doc.setFont("helvetica", "normal");
-      doc.text(productInstructions[product] || "Usage not found.", 20, yPos + 10);
-      yPos += 20;
+
+      const wrappedText = doc.splitTextToSize(productInstructions[product] || "Usage not found.", maxTextWidth);
+      doc.text(wrappedText, margin, yPos);
+      yPos += wrappedText.length * lineHeight; // Adjust spacing based on text length
     });
 
     doc.save(`${customerName}_Skincare_Routine.pdf`);
-
-    onSuccess(); // Reset form & show success message
+    onSuccess();
   };
 
-  return (
-    <button onClick={generatePDF}>Download PDF</button>
-  );
+  return <button onClick={generatePDF}>Download PDF</button>;
 };
 
 export default PDFGenerator;
