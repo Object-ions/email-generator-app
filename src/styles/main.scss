@@ -1,0 +1,58 @@
+@import "variables";  // Import variables if needed
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+.app-container {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.form-container {
+  max-width: 600px;
+  margin: auto;
+  text-align: center;
+}
+
+input[type="text"] {
+  padding: 8px;
+  font-size: 16px;
+  margin: 10px 0;
+  width: 100%;
+}
+
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.product-table th, .product-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.product-table th {
+  background-color: #f4f4f4;
+  font-size: 18px;
+}
+
+label {
+  display: flex;
+  align-items: center;
+}
+
+input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
