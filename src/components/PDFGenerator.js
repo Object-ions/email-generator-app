@@ -5,6 +5,9 @@ import phoneIcon from "../assets/icons/phone.png";
 import globeIcon from "../assets/icons/globe.png";
 import locationIcon from "../assets/icons/location.png";
 import instagramIcon from "../assets/icons/instagram.png";
+import montserratBase64 from "../assets/fonts/MontserratBase64";
+import montserratBoldBase64 from "../assets/fonts/MontserratBoldBase64";
+
 
 const productInstructions = {
   "New Line Cleanser": "Use daily in AM / PM.",
@@ -33,14 +36,21 @@ const PDFGenerator = ({ customerName, customerEmail, selectedProducts, onSuccess
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 40;
 
+    // Register Montserrat Font
+    doc.addFileToVFS("Montserrat-Regular.ttf", montserratBase64);
+    doc.addFont("Montserrat-Regular.ttf", "montserrat", "normal");
+
+    doc.addFileToVFS("Montserrat-Bold.ttf", montserratBoldBase64);
+    doc.addFont("Montserrat-Bold.ttf", "montserrat", "bold");
+
     // Header
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(20);
-    doc.text("Thank you from Zahav Medspa", margin, 50);
+    doc.setFont("montserrat", "normal"); 
+    doc.setFontSize(25);
+    doc.text("THANK YOU, FROM ZAHAV MEDSPA", 40, 50);
 
     // Body
     doc.setFontSize(12);
-    doc.setFont("helvetica", "normal");
+    doc.setFont("montserrat", "normal");
     doc.text(
       `Dear ${customerName},`,
       margin,
@@ -57,11 +67,11 @@ const PDFGenerator = ({ customerName, customerEmail, selectedProducts, onSuccess
     // Instructions
     let yPos = 180;
     selectedProducts.forEach((product, index) => {
-      doc.setFont("helvetica", "bold");
+      doc.setFont("montserrat", "bold");
       doc.text(`${index + 1}. ${product}`, margin, yPos);
       yPos += 18;
 
-      doc.setFont("helvetica", "normal");
+      doc.setFont("montserrat", "normal");
       const wrappedText = doc.splitTextToSize(productInstructions[product] || "Usage instructions not found.", pageWidth - margin * 2);
       doc.text(wrappedText, margin, yPos);
       yPos += wrappedText.length * 18;
@@ -69,12 +79,12 @@ const PDFGenerator = ({ customerName, customerEmail, selectedProducts, onSuccess
 
     // Footer - Stay in Touch
     yPos += 40;
-    doc.setFont("helvetica", "bold");
+    doc.setFont("montserrat", "bold");
     doc.setFontSize(14);
     doc.text("Stay in Touch", margin, yPos);
     yPos += 20;
 
-    doc.setFont("helvetica", "normal");
+    doc.setFont("montserrat", "normal");
     doc.setFontSize(12);
 
     // Icon size and spacing
