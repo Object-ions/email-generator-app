@@ -5,14 +5,12 @@ import phoneIcon from "../assets/icons/phone.png";
 import globeIcon from "../assets/icons/globe.png";
 import locationIcon from "../assets/icons/location.png";
 import instagramIcon from "../assets/icons/instagram.png";
-import modelImage from "../assets/images/model.jpg";
 
 const PDFGenerator = ({ customerName, customerEmail, selectedProducts, onSuccess }) => {
   const createPDF = () => {
     const doc = new jsPDF({ unit: "pt", format: "a4" });
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 40;
-    const columnWidth = (pageWidth - margin * 2) / 2; // Divide page into two columns
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(20);
@@ -45,9 +43,8 @@ const PDFGenerator = ({ customerName, customerEmail, selectedProducts, onSuccess
 
     // Add spacing before Stay in Touch section
     yPos += 40;
-    const sectionTop = yPos; // Save this position to align the model image
 
-    // Left Column: Stay in Touch
+    // Stay in Touch Section
     doc.setFont("helvetica", "bold");
     doc.setFontSize(14);
     doc.text("Stay in Touch", margin, yPos);
@@ -74,12 +71,6 @@ const PDFGenerator = ({ customerName, customerEmail, selectedProducts, onSuccess
     addIconText(globeIcon, "www.zahavmedspa.com", "https://www.zahavmedspa.com");
     addIconText(locationIcon, "8700 E Pinnacle Peak Rd. Suite 101, Scottsdale AZ", "https://goo.gl/maps/QfXq7x6ZK8v3yPuq5");
     addIconText(instagramIcon, "Instagram: @medspazahav", "https://www.instagram.com/medspazahav");
-
-    // Right Column: Model Image
-    const imgWidth = columnWidth; // Ensure the image fits inside the second column
-    const imgHeight = imgWidth * 1.3; // Adjust aspect ratio
-
-    doc.addImage(modelImage, "JPEG", margin + columnWidth + 20, sectionTop, imgWidth, imgHeight);
 
     return doc;
   };
