@@ -1,25 +1,18 @@
 import React from "react";
 import jsPDF from "jspdf";
 import emailjs from "emailjs-com";
-
-const productInstructions = {
-  "New Line Cleanser": "Use daily in AM / PM.",
-  "New Line Facial Peel": "Apply a thin layer all over the face. Avoid the eye area. Leave on for 1 min then massage in circle motions all over the face and rinse with warm water. Repeat 1x a week.",
-  "New Line Day Cream": "Use daily every AM after cleansing & before applying SPF.",
-  "New Line PM Cream": "Use daily at PM on face/neck after serums.",
-  "New Line Vitamin C": "Use daily at PM. Apply to face, neck, décolletage, and arms. Use alongside Red LED device for best results.",
-  "Zahav Instant Sun Protector": "Use daily every AM after moisturizing face.",
-  "Zahav Salicylic Cleanser": "Use as a facewash 1-2x a day. For better results, leave on for 1-2 min then wash off.",
-  "Zahav Super Boost 400": "Use every AM on face and follow with moisturizer.",
-  "Zahav Resurfacing Mask": "Use once per week at PM on clean and dry face. Leave on for 20 min, then rinse with water. Follow with Super Boost 400 serum or moisturizer."
-};
+import phoneIcon from "../assets/icons/phone.png";
+import globeIcon from "../assets/icons/globe.png";
+import locationIcon from "../assets/icons/location.png";
+import instagramIcon from "../assets/icons/instagram.png";
+import modelImage from "../assets/images/model.jpg";
 
 const PDFGenerator = ({ customerName, customerEmail, selectedProducts, onSuccess }) => {
-  const generatePDF = () => {
+  const createPDF = () => {
     const doc = new jsPDF({ unit: "pt", format: "a4" });
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 40;
-    const maxTextWidth = pageWidth - margin * 2;
+    const columnWidth = (pageWidth - margin * 2) / 2; // Divide page into two columns
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(20);
@@ -35,7 +28,7 @@ const PDFGenerator = ({ customerName, customerEmail, selectedProducts, onSuccess
       "Thank you for shopping with us! Below are your personalized skincare instructions.",
       margin,
       120,
-      { maxWidth: maxTextWidth }
+      { maxWidth: pageWidth - margin * 2 }
     );
 
     let yPos = 160;
@@ -45,19 +38,62 @@ const PDFGenerator = ({ customerName, customerEmail, selectedProducts, onSuccess
       yPos += 18;
 
       doc.setFont("helvetica", "normal");
-      const wrappedText = doc.splitTextToSize(productInstructions[product] || "Usage not found.", maxTextWidth);
+      const wrappedText = doc.splitTextToSize(product, pageWidth - margin * 2);
       doc.text(wrappedText, margin, yPos);
       yPos += wrappedText.length * 18;
     });
 
-    const pdfFileName = `${customerName}_Skincare_Routine.pdf`;
-    const pdfBase64 = doc.output("datauristring").split(",")[1];
+    // Add spacing before Stay in Touch section
+    yPos += 40;
+    const sectionTop = yPos; // Save this position to align the model image
 
-    sendEmail(pdfBase64, pdfFileName);
-    onSuccess();
+    // Left Column: Stay in Touch
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text("Stay in Touch", margin, yPos);
+    yPos += 20;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+
+    // Icon size and spacing
+    const iconSize = 14;
+    const textIndent = 30; // Space after icons
+
+    const addIconText = (icon, text, url = null) => {
+      doc.addImage(icon, "PNG", margin, yPos - 12, iconSize, iconSize);
+      if (url) {
+        doc.textWithLink(text, margin + textIndent, yPos, { url });
+      } else {
+        doc.text(text, margin + textIndent, yPos);
+      }
+      yPos += 20;
+    };
+
+    addIconText(phoneIcon, "480-319-5765 (We accept SMS)", "tel:4803195765");
+    addIconText(globeIcon, "www.zahavmedspa.com", "https://www.zahavmedspa.com");
+    addIconText(locationIcon, "8700 E Pinnacle Peak Rd. Suite 101, Scottsdale AZ", "https://goo.gl/maps/QfXq7x6ZK8v3yPuq5");
+    addIconText(instagramIcon, "Instagram: @medspazahav", "https://www.instagram.com/medspazahav");
+
+    // Right Column: Model Image
+    const imgWidth = columnWidth; // Ensure the image fits inside the second column
+    const imgHeight = imgWidth * 1.3; // Adjust aspect ratio
+
+    doc.addImage(modelImage, "JPEG", margin + columnWidth + 20, sectionTop, imgWidth, imgHeight);
+
+    return doc;
   };
 
-  const sendEmail = (pdfBase64, pdfFileName) => {
+  const downloadPDF = () => {
+    const doc = createPDF();
+    doc.save(`${customerName}_Skincare_Routine.pdf`);
+  };
+
+  const sendEmail = () => {
+    const doc = createPDF();
+    const pdfFileName = `${customerName}_Skincare_Routine.pdf`;
+    const pdfBase64 = doc.output("datauristring").split(",")[1]; // Convert to Base64
+
     const serviceID = process.env.REACT_APP_EMAILJS_SERVICE_ID;
     const templateID = process.env.REACT_APP_EMAILJS_TEMPLATE_ID;
     const userID = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
@@ -72,9 +108,16 @@ const PDFGenerator = ({ customerName, customerEmail, selectedProducts, onSuccess
     emailjs.send(serviceID, templateID, emailParams, userID)
       .then(() => alert("Email has been sent successfully!"))
       .catch(() => alert("Failed to send email. Please try again."));
+    
+    onSuccess();
   };
 
-  return <button onClick={generatePDF}>Generate & Send PDF</button>;
+  return (
+    <div>
+      <button onClick={downloadPDF}>Download PDF</button>
+      <button onClick={sendEmail}>Send Email with PDF</button>
+    </div>
+  );
 };
 
 export default PDFGenerator;
