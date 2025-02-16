@@ -34,51 +34,57 @@ const PDFGenerator = ({ customerName, customerEmail, selectedProducts, onSuccess
   const createPDF = () => {
     const doc = new jsPDF({ unit: "pt", format: "a4" });
     const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
     const margin = 40;
-
+    
     // Register Montserrat Font
     doc.addFileToVFS("Montserrat-Regular.ttf", montserratBase64);
     doc.addFont("Montserrat-Regular.ttf", "montserrat", "normal");
-
     doc.addFileToVFS("Montserrat-Bold.ttf", montserratBoldBase64);
     doc.addFont("Montserrat-Bold.ttf", "montserrat", "bold");
+
+    let yPos = 80; // Start with a top margin of 40px
 
     // Header
     doc.setFont("montserrat", "normal"); 
     doc.setFontSize(25);
-    doc.text("THANK YOU, FROM ZAHAV MEDSPA", 40, 50);
+    doc.text("THANK YOU, FROM ZAHAV MEDSPA", margin, yPos);
+    yPos += 50; // Space after the header
 
-    // Body
+    // First Paragraph (No Change)
     doc.setFontSize(12);
     doc.setFont("montserrat", "normal");
-    doc.text(
-      `Dear ${customerName},`,
-      margin,
-      90
-    );
+    doc.text(`Dear ${customerName},`, margin, yPos);
+    yPos += 25;
 
-    doc.text(
-      "Thank you for your recent visit at Zahav Med Spa. We are happy to have you as a valued customer. We hope you enjoyed your treatment with us and we’re looking forward to having you again for one of our luxury treatments. Per your customization of the treatment with one of our beauty representatives, please follow the following instructions:",
-      margin,
-      110,
-      { maxWidth: pageWidth - margin * 2 }
-    );
+    const firstParagraph = `Thank you for your recent visit at Zahav Med Spa. We are happy to have you as a valued customer. 
+    We hope you enjoyed your treatment with us and we’re looking forward to having you again for one of our luxury treatments. 
+    Per your customization of the treatment with one of our beauty representatives, please follow the following instructions:`;
+
+    const wrappedFirstParagraph = doc.splitTextToSize(firstParagraph, pageWidth - margin * 2);
+    doc.text(wrappedFirstParagraph, margin, yPos);
+    yPos += wrappedFirstParagraph.length * 18 + 10; // Add 10px margin after the first paragraph
+
+    // Second Paragraph (No Change)
+    doc.setFont("montserrat", "normal");
 
     // Instructions
-    let yPos = 180;
     selectedProducts.forEach((product, index) => {
-      doc.setFont("montserrat", "bold");
-      doc.text(`${index + 1}. ${product}`, margin, yPos);
-      yPos += 18;
+        doc.setFont("montserrat", "bold");
+        doc.text(`${index + 1}. ${product}`, margin, yPos);
+        yPos += 18;
 
-      doc.setFont("montserrat", "normal");
-      const wrappedText = doc.splitTextToSize(productInstructions[product] || "Usage instructions not found.", pageWidth - margin * 2);
-      doc.text(wrappedText, margin, yPos);
-      yPos += wrappedText.length * 18;
+        doc.setFont("montserrat", "normal");
+        const wrappedText = doc.splitTextToSize(productInstructions[product] || "Usage instructions not found.", pageWidth - margin * 2);
+        doc.text(wrappedText, margin, yPos);
+        yPos += wrappedText.length * 18;
     });
 
+    // Ensure Footer Stays at the Bottom
+    const footerHeight = 100; // Footer Height (Fixed)
+    yPos = Math.max(yPos, pageHeight - footerHeight);
+
     // Footer - Stay in Touch
-    yPos += 40;
     doc.setFont("montserrat", "bold");
     doc.setFontSize(14);
     doc.text("Stay in Touch", margin, yPos);
@@ -92,13 +98,13 @@ const PDFGenerator = ({ customerName, customerEmail, selectedProducts, onSuccess
     const textIndent = 30; // Space after icons
 
     const addIconText = (icon, text, url = null) => {
-      doc.addImage(icon, "PNG", margin, yPos - 12, iconSize, iconSize);
-      if (url) {
-        doc.textWithLink(text, margin + textIndent, yPos, { url });
-      } else {
-        doc.text(text, margin + textIndent, yPos);
-      }
-      yPos += 20;
+        doc.addImage(icon, "PNG", margin, yPos - 12, iconSize, iconSize);
+        if (url) {
+            doc.textWithLink(text, margin + textIndent, yPos, { url });
+        } else {
+            doc.text(text, margin + textIndent, yPos);
+        }
+        yPos += 20;
     };
 
     addIconText(phoneIcon, "480-319-5765 (We accept SMS)", "tel:4803195765");
@@ -107,7 +113,7 @@ const PDFGenerator = ({ customerName, customerEmail, selectedProducts, onSuccess
     addIconText(instagramIcon, "Instagram: @medspazahav", "https://www.instagram.com/medspazahav");
 
     return doc;
-  };
+};
 
   const downloadPDF = () => {
     const doc = createPDF();
