@@ -27,7 +27,7 @@ const newLineProducts = [
 
 const Form = () => {
   const [customerName, setCustomerName] = useState("");
-  const [customerEmail, setCustomerEmail] = useState("");
+  // const [customerEmail, setCustomerEmail] = useState("");
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [successMessage, setSuccessMessage] = useState(false);
 
@@ -40,7 +40,7 @@ const Form = () => {
 
   const handleFormReset = () => {
     setCustomerName("");
-    setCustomerEmail(""); // ✅ Clear email after submission
+    // setCustomerEmail(""); // ✅ Clear email after submission
     setSelectedProducts([]);
     setSuccessMessage(true);
 
@@ -58,14 +58,14 @@ const Form = () => {
         onChange={(e) => setCustomerName(e.target.value)}
         placeholder="Enter first name"
       />
-
+{/* 
       <label>Email:</label>
       <input
         type="email"
         value={customerEmail}
         onChange={(e) => setCustomerEmail(e.target.value)}
         placeholder="Enter email"
-      />
+      /> */}
 
       <h2>Select Products</h2>
       <table className="product-table">
@@ -111,10 +111,11 @@ const Form = () => {
         </tbody>
       </table>
 
-      {selectedProducts.length > 0 && customerName && customerEmail && (
+      {/* {selectedProducts.length > 0 && customerName && customerEmail && ( */}
+      {selectedProducts.length > 0 && customerName && (
         <PDFGenerator
           customerName={customerName}
-          customerEmail={customerEmail}
+          // customerEmail={customerEmail}
           selectedProducts={selectedProducts}
           onSuccess={handleFormReset}
         />

@@ -120,33 +120,33 @@ const PDFGenerator = ({ customerName, customerEmail, selectedProducts, onSuccess
     doc.save(`${customerName}_Skincare_Routine.pdf`);
   };
 
-  const sendEmail = () => {
-    const doc = createPDF();
-    const pdfFileName = `${customerName}_Skincare_Routine.pdf`;
-    const pdfBase64 = doc.output("datauristring").split(",")[1]; // Convert to Base64
+  // const sendEmail = () => {
+  //   const doc = createPDF();
+  //   const pdfFileName = `${customerName}_Skincare_Routine.pdf`;
+  //   const pdfBase64 = doc.output("datauristring").split(",")[1]; // Convert to Base64
 
-    const serviceID = process.env.REACT_APP_EMAILJS_SERVICE_ID;
-    const templateID = process.env.REACT_APP_EMAILJS_TEMPLATE_ID;
-    const userID = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
+  //   const serviceID = process.env.REACT_APP_EMAILJS_SERVICE_ID;
+  //   const templateID = process.env.REACT_APP_EMAILJS_TEMPLATE_ID;
+  //   const userID = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
 
-    const emailParams = {
-      name: customerName,
-      email: customerEmail,
-      attachment: pdfBase64,
-      attachment_filename: pdfFileName
-    };
+  //   const emailParams = {
+  //     name: customerName,
+  //     email: customerEmail,
+  //     attachment: pdfBase64,
+  //     attachment_filename: pdfFileName
+  //   };
 
-    emailjs.send(serviceID, templateID, emailParams, userID)
-      .then(() => alert("Email has been sent successfully!"))
-      .catch(() => alert("Failed to send email. Please try again."));
+  //   emailjs.send(serviceID, templateID, emailParams, userID)
+  //     .then(() => alert("Email has been sent successfully!"))
+  //     .catch(() => alert("Failed to send email. Please try again."));
     
-    onSuccess();
-  };
+  //   onSuccess();
+  // };
 
   return (
     <div>
       <button onClick={downloadPDF}>Download PDF</button>
-      <button onClick={sendEmail}>Send Email with PDF</button>
+      {/* <button onClick={sendEmail}>Send Email with PDF</button> */}
     </div>
   );
 };
