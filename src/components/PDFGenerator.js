@@ -1,6 +1,6 @@
 import React from "react";
 import jsPDF from "jspdf";
-import emailjs from "emailjs-com";
+// import emailjs from "emailjs-com";
 import phoneIcon from "../assets/icons/phone.png";
 import globeIcon from "../assets/icons/globe.png";
 import locationIcon from "../assets/icons/location.png";
